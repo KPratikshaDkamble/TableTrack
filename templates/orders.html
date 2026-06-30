@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Orders{% endblock %}
+{% block heading %}Order Management{% endblock %}
+
+{% block content %}
+<div class="panel-header">
+  <h2><i class="bi bi-receipt"></i> All Orders ({{ orders|length }})</h2>
+  <a href="{{ url_for('order_new') }}" class="btn btn-accent"><i class="bi bi-plus-circle"></i> New Order</a>
+</div>
+
+<div class="table-panel">
+  <table class="table">
+    <thead><tr><th>Order</th><th>Customer</th><th>Table</th><th>Status</th><th>Total</th><th>Date</th><th></th></tr></thead>
+    <tbody>
+      {% for o in orders %}
+      <tr>
+        <td>#{{ o[0] }}</td>
+        <td>{{ o[1] }}</td>
+        <td>{{ o[2] }}</td>
+        <td><span class="pill pill-{{ o[3]|lower }}">{{ o[3] }}</span></td>
+        <td>${{ "%.2f"|format(o[4]) }}</td>
+        <td>{{ o[5] }}</td>
+        <td class="text-end"><a href="{{ url_for('order_detail', order_id=o[0]) }}" class="btn btn-sm btn-outline-soft">View</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="text-center text-secondary py-4">No orders yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

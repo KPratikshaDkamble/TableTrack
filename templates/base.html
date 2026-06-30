@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}TableTrack{% endblock %} · TableTrack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-icon"><i class="bi bi-egg-fried"></i></span>
+      <span class="brand-text">Table<strong>Track</strong></span>
+    </div>
+    <nav class="nav flex-column nav-links">
+      <a class="nav-link {{ 'active' if request.path == '/' }}" href="{{ url_for('dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+      <a class="nav-link {{ 'active' if request.path.startswith('/menu') }}" href="{{ url_for('menu_list') }}"><i class="bi bi-journal-text"></i> Menu</a>
+      <a class="nav-link {{ 'active' if request.path.startswith('/orders') }}" href="{{ url_for('order_list') }}"><i class="bi bi-receipt"></i> Orders</a>
+      <a class="nav-link {{ 'active' if request.path.startswith('/tables') }}" href="{{ url_for('table_list') }}"><i class="bi bi-grid-3x3-gap"></i> Tables</a>
+      <a class="nav-link {{ 'active' if request.path.startswith('/customers') }}" href="{{ url_for('customer_list') }}"><i class="bi bi-people"></i> Customers</a>
+      <a class="nav-link {{ 'active' if request.path.startswith('/employees') }}" href="{{ url_for('employee_list') }}"><i class="bi bi-person-badge"></i> Employees</a>
+      <a class="nav-link {{ 'active' if request.path.startswith('/inventory') }}" href="{{ url_for('inventory_list') }}"><i class="bi bi-boxes"></i> Inventory</a>
+      <a class="nav-link {{ 'active' if request.path.startswith('/billing') }}" href="{{ url_for('billing_home') }}"><i class="bi bi-credit-card"></i> Billing</a>
+      <a class="nav-link {{ 'active' if request.path.startswith('/reports') }}" href="{{ url_for('reports_home') }}"><i class="bi bi-file-earmark-spreadsheet"></i> Reports</a>
+      <a class="nav-link {{ 'active' if request.path.startswith('/analytics') }}" href="{{ url_for('analytics_home') }}"><i class="bi bi-bar-chart-line"></i> Analytics</a>
+    </nav>
+    <div class="sidebar-footer">
+      <i class="bi bi-github"></i> Restaurant POS System
+    </div>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <h1>{% block heading %}Dashboard{% endblock %}</h1>
+      <div class="topbar-meta">
+        <span class="badge-live"><i class="bi bi-circle-fill"></i> Live</span>
+      </div>
+    </header>
+
+    <div class="content-body">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Employees{% endblock %}
+{% block heading %}Employee Management{% endblock %}
+
+{% block content %}
+<div class="card-panel mb-4">
+  <div class="panel-header"><h2><i class="bi bi-person-plus"></i> Add Employee</h2></div>
+  <form method="post" action="{{ url_for('employee_add') }}" class="row g-3">
+    <div class="col-md-4"><label class="form-label">Name</label><input name="name" class="form-control" required></div>
+    <div class="col-md-3">
+      <label class="form-label">Role</label>
+      <select name="role" class="form-select" required>
+        <option value="Manager">Manager</option>
+        <option value="Chef">Chef</option>
+        <option value="Waiter">Waiter</option>
+        <option value="Cashier">Cashier</option>
+      </select>
+    </div>
+    <div class="col-md-3"><label class="form-label">Salary ($)</label><input type="number" step="0.01" min="0" name="salary" class="form-control" required></div>
+    <div class="col-md-2 d-flex align-items-end"><button class="btn btn-accent w-100">Add</button></div>
+  </form>
+</div>
+
+<div class="table-panel">
+  <div class="p-3 pb-0">
+    <div class="panel-header">
+      <h2><i class="bi bi-person-badge"></i> Employees ({{ employees|length }})</h2>
+      <form class="d-flex gap-2" method="get">
+        <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">All Roles</option>
+          {% for r in ["Manager","Chef","Waiter","Cashier"] %}
+          <option value="{{ r }}" {{ 'selected' if role == r }}>{{ r }}</option>
+          {% endfor %}
+        </select>
+        <input class="form-control form-control-sm" type="search" name="q" value="{{ search }}" placeholder="Search...">
+      </form>
+    </div>
+  </div>
+  <table class="table">
+    <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Salary</th><th></th></tr></thead>
+    <tbody>
+      {% for e in employees %}
+      <tr>
+        <td>#{{ e[0] }}
+          <form id="edit-e-{{ e[0] }}" method="post" action="{{ url_for('employee_edit', employee_id=e[0]) }}" class="d-none"></form>
+        </td>
+        <td><input form="edit-e-{{ e[0] }}" name="name" value="{{ e[1] }}" class="form-control form-control-sm bg-transparent border-0"></td>
+        <td>
+          <select form="edit-e-{{ e[0] }}" name="role" class="form-select form-select-sm">
+            {% for r in ["Manager","Chef","Waiter","Cashier"] %}
+            <option value="{{ r }}" {{ 'selected' if e[2] == r }}>{{ r }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td><input form="edit-e-{{ e[0] }}" type="number" step="0.01" name="salary" value="{{ e[3] }}" class="form-control form-control-sm" style="width:110px"></td>
+        <td class="text-end">
+          <button form="edit-e-{{ e[0] }}" class="btn btn-sm btn-outline-soft"><i class="bi bi-check2"></i></button>
+          <form class="d-inline" method="post" action="{{ url_for('employee_delete', employee_id=e[0]) }}" onsubmit="return confirm('Delete this employee?');">
+            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-center text-secondary py-4">No employees found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

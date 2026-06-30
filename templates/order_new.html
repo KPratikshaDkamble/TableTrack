@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}New Order{% endblock %}
+{% block heading %}Create New Order{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('order_list') }}" class="btn btn-sm btn-outline-soft mb-3"><i class="bi bi-arrow-left"></i> Back to Orders</a>
+
+<form method="post" action="{{ url_for('order_create') }}" id="order-form">
+  <div class="card-panel mb-4">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Customer</label>
+        <select name="customer_id" class="form-select" required>
+          <option value="" disabled selected>Select customer...</option>
+          {% for c in customers %}
+          <option value="{{ c[0] }}">{{ c[1] }} (#{{ c[0] }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Table</label>
+        <select name="table_id" class="form-select" required>
+          <option value="" disabled selected>Select available table...</option>
+          {% for t in tables %}
+          <option value="{{ t[0] }}">Table {{ t[0] }} (seats {{ t[1] }})</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-panel mb-4">
+    <div class="panel-header">
+      <h2><i class="bi bi-basket"></i> Items</h2>
+      <button type="button" class="btn btn-sm btn-outline-soft" id="add-row"><i class="bi bi-plus"></i> Add Item</button>
+    </div>
+    <div id="rows"></div>
+  </div>
+
+  <button class="btn btn-accent btn-lg"><i class="bi bi-check2-circle"></i> Place Order</button>
+</form>
+
+<template id="row-template">
+  <div class="row g-2 align-items-end mb-2 item-row">
+    <div class="col-md-7">
+      <select name="item_id[]" class="form-select">
+        <option value="" disabled selected>Select item...</option>
+        {% for m in menu_items %}
+        <option value="{{ m[0] }}">{{ m[1] }} — ${{ "%.2f"|format(m[2]) }} (stock {{ m[3] }})</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <input type="number" name="quantity[]" min="1" value="1" class="form-control" placeholder="Qty">
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-outline-danger w-100 remove-row"><i class="bi bi-trash"></i></button>
+    </div>
+  </div>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const rows = document.getElementById('rows');
+  const tmpl = document.getElementById('row-template');
+
+  function addRow() {
+    const clone = tmpl.content.cloneNode(true);
+    clone.querySelector('.remove-row').addEventListener('click', (e) => {
+      e.target.closest('.item-row').remove();
+    });
+    rows.appendChild(clone);
+  }
+
+  document.getElementById('add-row').addEventListener('click', addRow);
+  addRow();
+</script>
+{% endblock %}

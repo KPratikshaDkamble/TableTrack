@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block heading %}Reports Management{% endblock %}
+
+{% block content %}
+<div class="stat-grid">
+  <a class="stat-card text-decoration-none text-reset" href="{{ url_for('report_menu') }}">
+    <div class="stat-icon icon-orange"><i class="bi bi-journal-text"></i></div>
+    <div class="stat-value" style="font-size:1.1rem;">Menu Report</div>
+    <div class="stat-label"><i class="bi bi-download"></i> Download CSV</div>
+  </a>
+  <a class="stat-card text-decoration-none text-reset" href="{{ url_for('report_customers') }}">
+    <div class="stat-icon icon-purple"><i class="bi bi-people"></i></div>
+    <div class="stat-value" style="font-size:1.1rem;">Customer Report</div>
+    <div class="stat-label"><i class="bi bi-download"></i> Download CSV</div>
+  </a>
+  <a class="stat-card text-decoration-none text-reset" href="{{ url_for('report_employees') }}">
+    <div class="stat-icon icon-blue"><i class="bi bi-person-badge"></i></div>
+    <div class="stat-value" style="font-size:1.1rem;">Employee Report</div>
+    <div class="stat-label"><i class="bi bi-download"></i> Download CSV</div>
+  </a>
+  <a class="stat-card text-decoration-none text-reset" href="{{ url_for('report_orders') }}">
+    <div class="stat-icon icon-green"><i class="bi bi-receipt"></i></div>
+    <div class="stat-value" style="font-size:1.1rem;">Orders Report</div>
+    <div class="stat-label"><i class="bi bi-download"></i> Download CSV</div>
+  </a>
+  <a class="stat-card text-decoration-none text-reset" href="{{ url_for('report_inventory') }}">
+    <div class="stat-icon icon-yellow"><i class="bi bi-boxes"></i></div>
+    <div class="stat-value" style="font-size:1.1rem;">Inventory Report</div>
+    <div class="stat-label"><i class="bi bi-download"></i> Download CSV</div>
+  </a>
+</div>
+{% endblock %}

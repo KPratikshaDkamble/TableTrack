@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Menu{% endblock %}
+{% block heading %}Menu Management{% endblock %}
+
+{% block content %}
+<div class="card-panel mb-4">
+  <div class="panel-header"><h2><i class="bi bi-plus-circle"></i> Add Menu Item</h2></div>
+  <form method="post" action="{{ url_for('menu_add') }}" class="row g-3">
+    <div class="col-md-3"><label class="form-label">Name</label><input name="name" class="form-control" required></div>
+    <div class="col-md-3"><label class="form-label">Category</label><input name="category" class="form-control" required></div>
+    <div class="col-md-2"><label class="form-label">Price ($)</label><input type="number" step="0.01" min="0" name="price" class="form-control" required></div>
+    <div class="col-md-2"><label class="form-label">Stock</label><input type="number" min="0" name="stock" class="form-control" required></div>
+    <div class="col-md-2 d-flex align-items-end"><button class="btn btn-accent w-100">Add Item</button></div>
+  </form>
+</div>
+
+<div class="table-panel">
+  <div class="p-3 pb-0">
+    <div class="panel-header">
+      <h2><i class="bi bi-journal-text"></i> Menu Items ({{ items|length }})</h2>
+      <form class="d-flex" method="get">
+        <input class="form-control form-control-sm" type="search" name="q" value="{{ search }}" placeholder="Search name or category...">
+      </form>
+    </div>
+  </div>
+  <table class="table">
+    <thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th></th></tr></thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>#{{ item[0] }}
+          <form id="edit-{{ item[0] }}" method="post" action="{{ url_for('menu_edit', item_id=item[0]) }}" class="d-none"></form>
+        </td>
+        <td><input form="edit-{{ item[0] }}" name="name" value="{{ item[1] }}" class="form-control form-control-sm bg-transparent border-0"></td>
+        <td><input form="edit-{{ item[0] }}" name="category" value="{{ item[2] }}" class="form-control form-control-sm bg-transparent border-0"></td>
+        <td><input form="edit-{{ item[0] }}" type="number" step="0.01" name="price" value="{{ item[3] }}" class="form-control form-control-sm" style="width:90px"></td>
+        <td>
+          <input form="edit-{{ item[0] }}" type="number" name="stock" value="{{ item[4] }}" class="form-control form-control-sm" style="width:80px">
+          {% if item[4] <= 5 %}<span class="pill pill-low ms-1">Low</span>{% endif %}
+        </td>
+        <td class="text-end">
+          <button form="edit-{{ item[0] }}" class="btn btn-sm btn-outline-soft"><i class="bi bi-check2"></i> Save</button>
+        </td>
+        <td>
+          <form method="post" action="{{ url_for('menu_delete', item_id=item[0]) }}" onsubmit="return confirm('Delete this item?');">
+            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="text-center text-secondary py-4">No menu items found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

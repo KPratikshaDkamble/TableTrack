@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block heading %}Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('analytics_export_csv') }}" class="btn btn-outline-soft"><i class="bi bi-download"></i> Export Sales CSV</a>
+</div>
+
+<div class="chart-grid">
+  <div class="chart-card"><h3><i class="bi bi-graph-up"></i> Daily Sales</h3><canvas id="dailySales"></canvas></div>
+  <div class="chart-card"><h3><i class="bi bi-bar-chart"></i> Monthly Revenue</h3><canvas id="monthlySales"></canvas></div>
+  <div class="chart-card"><h3><i class="bi bi-boxes"></i> Inventory Stock Levels</h3><canvas id="inventory"></canvas></div>
+  <div class="chart-card"><h3><i class="bi bi-pie-chart"></i> Top 5 Selling Items</h3><canvas id="topItems"></canvas></div>
+  <div class="chart-card"><h3><i class="bi bi-people"></i> Top Customers by Orders</h3><canvas id="topCustomers"></canvas></div>
+  <div class="chart-card"><h3><i class="bi bi-cash-stack"></i> Employee Salary Distribution</h3><canvas id="salary"></canvas></div>
+  <div class="chart-card"><h3><i class="bi bi-pie-chart-fill"></i> Order Status Distribution</h3><canvas id="orderStatus"></canvas></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const palette = ['#ff7a45','#6c5ce7','#2ecc71','#3498db','#f5c518','#ff5c5c','#1abc9c','#e67e22','#9b59b6','#34495e'];
+Chart.defaults.color = '#9aa0b4';
+Chart.defaults.borderColor = '#262b3d';
+
+async function fetchData(url) {
+  const res = await fetch(url);
+  return res.json();
+}
+
+function lineChart(ctx, data, label) {
+  return new Chart(ctx, {
+    type: 'line',
+    data: { labels: data.labels, datasets: [{ label, data: data.values, borderColor: '#ff7a45', backgroundColor: 'rgba(255,122,69,0.15)', tension: 0.35, fill: true }] },
+    options: { plugins: { legend: { display: false } } }
+  });
+}
+
+function barChart(ctx, data, label, color) {
+  return new Chart(ctx, {
+    type: 'bar',
+    data: { labels: data.labels, datasets: [{ label, data: data.values, backgroundColor: color || '#6c5ce7', borderRadius: 6 }] },
+    options: { plugins: { legend: { display: false } } }
+  });
+}
+
+function pieChart(ctx, data) {
+  return new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels: data.labels, datasets: [{ data: data.values, backgroundColor: palette }] },
+    options: { plugins: { legend: { position: 'bottom' } } }
+  });
+}
+
+(async () => {
+  lineChart(document.getElementById('dailySales'), await fetchData("{{ url_for('data_daily_sales') }}"), 'Sales ($)');
+  barChart(document.getElementById('monthlySales'), await fetchData("{{ url_for('data_monthly_sales') }}"), 'Revenue ($)', '#2ecc71');
+  barChart(document.getElementById('inventory'), await fetchData("{{ url_for('data_inventory') }}"), 'Stock', '#3498db');
+  pieChart(document.getElementById('topItems'), await fetchData("{{ url_for('data_top_items') }}"));
+  barChart(document.getElementById('topCustomers'), await fetchData("{{ url_for('data_top_customers') }}"), 'Orders', '#f5c518');
+  barChart(document.getElementById('salary'), await fetchData("{{ url_for('data_employee_salary') }}"), 'Salary ($)', '#ff5c5c');
+  pieChart(document.getElementById('orderStatus'), await fetchData("{{ url_for('data_order_status') }}"));
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Tables{% endblock %}
+{% block heading %}Table Management{% endblock %}
+
+{% block content %}
+<div class="card-panel mb-4">
+  <div class="panel-header"><h2><i class="bi bi-plus-circle"></i> Add Table</h2></div>
+  <form method="post" action="{{ url_for('table_add') }}" class="row g-3">
+    <div class="col-md-4"><label class="form-label">Capacity</label><input type="number" min="1" name="capacity" class="form-control" required></div>
+    <div class="col-md-2 d-flex align-items-end"><button class="btn btn-accent w-100">Add</button></div>
+  </form>
+</div>
+
+<div class="panel-header">
+  <h2><i class="bi bi-grid-3x3-gap"></i> Tables ({{ tables|length }})</h2>
+  <div class="btn-group btn-group-sm">
+    <a href="{{ url_for('table_list') }}" class="btn {{ 'btn-accent' if not status else 'btn-outline-soft' }}">All</a>
+    {% for s in ["Available","Occupied","Reserved"] %}
+    <a href="{{ url_for('table_list', status=s) }}" class="btn {{ 'btn-accent' if status == s else 'btn-outline-soft' }}">{{ s }}</a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="stat-grid">
+  {% for t in tables %}
+  <div class="stat-card">
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
+        <div class="stat-value">Table {{ t[0] }}</div>
+        <div class="stat-label">Seats {{ t[1] }}</div>
+      </div>
+      <span class="pill pill-{{ t[2]|lower }}">{{ t[2] }}</span>
+    </div>
+    <form method="post" action="{{ url_for('table_status', table_id=t[0]) }}" class="d-flex gap-2 mt-3">
+      <select name="status" class="form-select form-select-sm">
+        {% for s in ["Available","Occupied","Reserved"] %}
+        <option value="{{ s }}" {{ 'selected' if t[2] == s }}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-sm btn-outline-soft"><i class="bi bi-check2"></i></button>
+    </form>
+    <form method="post" action="{{ url_for('table_delete', table_id=t[0]) }}" onsubmit="return confirm('Delete this table?');" class="mt-2">
+      <button class="btn btn-sm btn-outline-danger w-100"><i class="bi bi-trash"></i> Delete</button>
+    </form>
+  </div>
+  {% else %}
+  <div class="text-secondary py-4">No tables found.</div>
+  {% endfor %}
+</div>
+{% endblock %}
